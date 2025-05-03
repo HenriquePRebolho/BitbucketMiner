@@ -2,11 +2,15 @@ package aiss.BitbucketMiner.BitbucketMiner.model.gitminer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
+@Entity  // para que funcione con JpaRepository
 public class MinerCommit {
 
+    @Id
     @JsonProperty("id")
     private String id;
     @JsonProperty("title")

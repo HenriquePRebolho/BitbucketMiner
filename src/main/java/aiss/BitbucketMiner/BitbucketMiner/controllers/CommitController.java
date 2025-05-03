@@ -23,4 +23,22 @@ public class CommitController {
     ) {
         return commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
     }
+
+
+    @GetMapping("/commits/{id}")
+    public MinerCommit getCommit(@PathVariable String id) {
+        return commitService.getCommitById("gentlero", "bitbucket-api", id);
+    }
+
+    @PostMapping("/{workspace}/{repo_slug}")
+    public String sendCommitsToGitMiner(
+            @PathVariable String workspace,
+            @PathVariable("repo_slug") String repoSlug,
+            @RequestParam(defaultValue = "5") int nCommits,
+            @RequestParam(defaultValue = "2") int maxPages
+    ) {
+        int saved = commitService.sendCommitsToGitMiner(workspace, repoSlug, nCommits, maxPages);
+        return saved + " commits enviados a GitMiner correctamente.";
+    }
+
 }

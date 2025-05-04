@@ -1,33 +1,34 @@
 
 package aiss.BitbucketMiner.BitbucketMiner.model;
 
-import aiss.BitbucketMiner.BitbucketMiner.model.issue.Self__2;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Links__2 {
 
-    @JsonProperty("self")
-    private Self__2 self;
+public class Avatar__2 {
 
-    @JsonProperty("self")
-    public Self__2 getSelf() {
-        return self;
+    @JsonProperty("href")
+    private String href;
+
+    @JsonProperty("href")
+    public String getHref() {
+        return href;
     }
 
-    @JsonProperty("self")
-    public void setSelf(Self__2 self) {
-        this.self = self;
+    @JsonProperty("href")
+    public void setHref(String href) {
+        this.href = href;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Links__2 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("self");
+        sb.append(Avatar__2 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append("href");
         sb.append('=');
-        sb.append(((this.self == null)?"<null>":this.self));
+        sb.append(((this.href == null)?"<null>":this.href));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -36,4 +37,5 @@ public class Links__2 {
         }
         return sb.toString();
     }
+
 }

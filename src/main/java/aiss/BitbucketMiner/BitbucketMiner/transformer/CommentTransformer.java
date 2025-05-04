@@ -1,0 +1,29 @@
+package aiss.BitbucketMiner.BitbucketMiner.transformer;
+
+import aiss.BitbucketMiner.BitbucketMiner.model.Comments;
+import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerComment;
+
+public class CommentTransformer {
+
+    public static MinerComment toGitMinerComment(Comments bitbucketComment) {
+        if (bitbucketComment == null) return null;
+
+        MinerComment result = new MinerComment();
+
+        // ID: Bitbucket lo da como Integer -> convertir a String
+        result.setId(bitbucketComment.getId() != null ? String.valueOf(bitbucketComment.getId()) : null);
+
+        // Body: content.raw
+        result.setBody(
+                bitbucketComment.getContent() != null ? bitbucketComment.getContent().getRaw() : null
+        );
+
+        // Fechas
+        result.setCreatedAt(bitbucketComment.getCreatedOn());
+        result.setUpdatedAt(
+                bitbucketComment.getUpdatedOn() != null ? bitbucketComment.getUpdatedOn().toString() : null
+        );
+
+        return result;
+    }
+}

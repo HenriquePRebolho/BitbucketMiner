@@ -14,8 +14,10 @@ public class CommitController {
     @Autowired
     CommitService commitService;
 
-    @GetMapping("/{workspace}/{repo_slug}/commits")
-    public List<MinerCommit> getCommits(
+
+
+    @GetMapping("/{workspace}/{repo_slug}")
+    public List<MinerCommit> getCommitsFromFixedRoute(
             @PathVariable String workspace,
             @PathVariable("repo_slug") String repoSlug,
             @RequestParam(defaultValue = "5") int nCommits,
@@ -23,7 +25,6 @@ public class CommitController {
     ) {
         return commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
     }
-
 
     @GetMapping("/commits/{id}")
     public MinerCommit getCommit(@PathVariable String id) {
@@ -40,5 +41,4 @@ public class CommitController {
         int saved = commitService.sendCommitsToGitMiner(workspace, repoSlug, nCommits, maxPages);
         return saved + " commits enviados a GitMiner correctamente.";
     }
-
 }

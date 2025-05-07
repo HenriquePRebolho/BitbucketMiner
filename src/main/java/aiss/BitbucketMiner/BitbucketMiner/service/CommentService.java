@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CommentService {
+public class
+CommentService {
 
     @Autowired
     RestTemplate restTemplate;

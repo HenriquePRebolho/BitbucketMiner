@@ -1,139 +1,106 @@
 package aiss.BitbucketMiner.BitbucketMiner.model.gitminer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
-@Entity  // para que funcione con JpaRepository
+@Entity
 public class MinerCommit {
 
     @Id
-    @JsonProperty("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore // ⚠️ Esto evita que se envíe al backend de GitMiner
     private String id;
+
     @JsonProperty("title")
     private String title;
+
     @JsonProperty("message")
     private String message;
-    @JsonProperty("authorName")
-    private String authorName;
-    @JsonProperty("authorEmail")
-    private String authorEmail;
-    @JsonProperty("authoredDate")
-    private String authoredDate;
-    @JsonProperty("webUrl")
-    private String webUrl;
 
-    @JsonProperty("id")
+    @JsonProperty("author_name")
+    private String author_name;
+
+    @JsonProperty("author_email")
+    private String author_email;
+
+    @JsonProperty("authored_date")
+    private String authored_date;
+
+    @JsonProperty("web_url")
+    private String web_url;
+
     public String getId() {
         return id;
     }
 
-    @JsonProperty("id")
     public void setId(String id) {
         this.id = id;
     }
 
-    @JsonProperty("title")
     public String getTitle() {
         return title;
     }
 
-    @JsonProperty("title")
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @JsonProperty("message")
     public String getMessage() {
         return message;
     }
 
-    @JsonProperty("message")
     public void setMessage(String message) {
         this.message = message;
     }
 
-    @JsonProperty("authorName")
-    public String getAuthorName() {
-        return authorName;
+    public String getAuthor_name() {
+        return author_name;
     }
 
-    @JsonProperty("authorName")
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthor_name(String author_name) {
+        this.author_name = author_name;
     }
 
-    @JsonProperty("authorEmail")
-    public String getAuthorEmail() {
-        return authorEmail;
+    public String getAuthor_email() {
+        return author_email;
     }
 
-    @JsonProperty("authorEmail")
-    public void setAuthorEmail(String authorEmail) {
-        this.authorEmail = authorEmail;
+    public void setAuthor_email(String author_email) {
+        this.author_email = author_email;
     }
 
-    @JsonProperty("authoredDate")
-    public String getAuthoredDate() {
-        return authoredDate;
+    public String getAuthored_date() {
+        return authored_date;
     }
 
-    @JsonProperty("authoredDate")
-    public void setAuthoredDate(String authoredDate) {
-        this.authoredDate = authoredDate;
+    public void setAuthored_date(String authored_date) {
+        this.authored_date = authored_date;
     }
 
-    @JsonProperty("webUrl")
-    public String getWebUrl() {
-        return webUrl;
+    public String getWeb_url() {
+        return web_url;
     }
 
-    @JsonProperty("webUrl")
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
+    public void setWeb_url(String web_url) {
+        this.web_url = web_url;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(MinerCommit.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-        sb.append("id");
-        sb.append('=');
-        sb.append(((this.id == null)?"<null>":this.id));
-        sb.append(',');
-        sb.append("title");
-        sb.append('=');
-        sb.append(((this.title == null)?"<null>":this.title));
-        sb.append(',');
-        sb.append("message");
-        sb.append('=');
-        sb.append(((this.message == null)?"<null>":this.message));
-        sb.append(',');
-        sb.append("authorName");
-        sb.append('=');
-        sb.append(((this.authorName == null)?"<null>":this.authorName));
-        sb.append(',');
-        sb.append("authorEmail");
-        sb.append('=');
-        sb.append(((this.authorEmail == null)?"<null>":this.authorEmail));
-        sb.append(',');
-        sb.append("authoredDate");
-        sb.append('=');
-        sb.append(((this.authoredDate == null)?"<null>":this.authoredDate));
-        sb.append(',');
-        sb.append("webUrl");
-        sb.append('=');
-        sb.append(((this.webUrl == null)?"<null>":this.webUrl));
-        sb.append(',');
-        if (sb.charAt((sb.length()- 1)) == ',') {
-            sb.setCharAt((sb.length()- 1), ']');
-        } else {
-            sb.append(']');
-        }
-        return sb.toString();
+        return "MinerCommit{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", author_name='" + author_name + '\'' +
+                ", author_email='" + author_email + '\'' +
+                ", authored_date='" + authored_date + '\'' +
+                ", web_url='" + web_url + '\'' +
+                '}';
     }
-
 }

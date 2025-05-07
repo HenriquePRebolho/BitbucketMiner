@@ -81,7 +81,7 @@ public class CommitService {
     // Metodo que nos piden para POST commits desde bitbucket a git miner
     public int sendCommitsToGitMiner(String workspace, String repoSlug, int nCommits, int maxPages) {
         List<MinerCommit> commits = getCommits(workspace, repoSlug, nCommits, maxPages);
-        String gitMinerUrl = "http://localhost:8080/commits"; // URL real del endpoint de GitMiner
+        String gitMinerUrl = "http://localhost:8080/gitminer/commits"; // URL real del endpoint de GitMiner
 
         int sent = 0;
         for (MinerCommit commit : commits) {
@@ -93,7 +93,7 @@ public class CommitService {
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("✔ Commit enviado correctamente: " + commit.getId());
+                    System.out.println("✔ Commit enviado correctamente: " + commit.getTitle());
                     sent++;
                 } else {
                     System.err.println("✖ Error al enviar commit " + commit.getId() + ": " + response.getStatusCode());
@@ -107,17 +107,15 @@ public class CommitService {
     }
 
 
-
-
     public void printCommit(MinerCommit commit) {
         if (commit != null) {
             System.out.println(" COMMIT [" + commit.getId() + "]");
             System.out.println("    - Title: " + commit.getTitle());
             System.out.println("    - Message: " + commit.getMessage());
-            System.out.println("    - Author Name: " + commit.getAuthorName());
-            System.out.println("    - Author Email: " + commit.getAuthorEmail());
-            System.out.println("    - Authored Date: " + commit.getAuthoredDate());
-            System.out.println("    - Web URL: " + commit.getWebUrl());
+            System.out.println("    - Author Name: " + commit.getAuthor_name());
+            System.out.println("    - Author Email: " + commit.getAuthor_email());
+            System.out.println("    - Authored Date: " + commit.getAuthored_date());
+            System.out.println("    - Web URL: " + commit.getWeb_url());
         } else {
             System.out.println("COMMIT [NULL]");
         }

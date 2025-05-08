@@ -53,6 +53,9 @@ public class UserServiceTest {
     public void sendUserToGitMinerTest() {
         MinerUser user = userService.getAuthenticatedUser(USERNAME, APP_PASSWORD);
         assertNotNull(user);
+// para ver el usuario que estamos enviando
+        System.out.println("Usuario a enviar:");
+        System.out.println(user);
 
         boolean enviado = userService.sendUserToGitMiner(user);
         assertTrue(enviado);

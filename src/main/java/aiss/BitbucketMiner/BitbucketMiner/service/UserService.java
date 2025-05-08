@@ -47,7 +47,7 @@ public class UserService {
 
     // Enviar el usuario autenticado a GitMiner
     public boolean sendUserToGitMiner(MinerUser user) {
-        String gitMinerUrl = "http://localhost:8080/users";
+        String gitMinerUrl = "http://localhost:8080/gitminer/users";
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -57,7 +57,7 @@ public class UserService {
             ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Usuario enviado correctamente: " + user.getId());
+                System.out.println("Usuario enviado correctamente: " + user.getName());
                 return true;
             } else {
                 System.err.println("Error al enviar usuario: " + response.getStatusCode());

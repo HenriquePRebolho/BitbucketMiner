@@ -2,6 +2,7 @@ package aiss.BitbucketMiner.BitbucketMiner.transformer;
 
 import aiss.BitbucketMiner.BitbucketMiner.model.Users;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerUser;
+import aiss.BitbucketMiner.BitbucketMiner.model.issue.Reporter;
 
 public class UserTransformer {
 
@@ -11,7 +12,7 @@ public class UserTransformer {
         MinerUser result = new MinerUser();
 
         // ID del usuario: usamos el UUID directamente
-        result.setId(bitbucketUser.getUuid());
+       // result.setId(bitbucketUser.getUuid());
 
         // Username
         result.setUsername(bitbucketUser.getUsername());
@@ -31,6 +32,8 @@ public class UserTransformer {
                 ? bitbucketUser.getLinks().getHtml().getHref()
                 : null);
 
+
         return result;
     }
+
 }

@@ -1,8 +1,11 @@
 package aiss.BitbucketMiner.BitbucketMiner.model.gitminer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -10,7 +13,8 @@ import jakarta.persistence.Id;
 public class MinerComment {
 
     @Id
-    @JsonProperty("id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore // ⚠️ Esto evita que se envíe al backend de GitMiner
     private String id;
 
     @JsonProperty("body")

@@ -1,8 +1,8 @@
 package aiss.BitbucketMiner.BitbucketMiner.transformer;
 
-
 import aiss.BitbucketMiner.BitbucketMiner.model.issue.Issue;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerIssue;
+import aiss.BitbucketMiner.BitbucketMiner.transformer.UserTransformer;
 
 public class IssueTransformer {
 
@@ -10,9 +10,6 @@ public class IssueTransformer {
         if (bitbucketIssue == null) return null;
 
         MinerIssue result = new MinerIssue();
-
-        // ID: lo convertimos a String para GitMiner
-        result.setId(bitbucketIssue.getId() != null ? String.valueOf(bitbucketIssue.getId()) : null);
 
         // Title y Description (content.raw)
         result.setTitle(bitbucketIssue.getTitle());
@@ -28,11 +25,14 @@ public class IssueTransformer {
         // Fecha de cierre (solo si el estado es "closed")
         result.setClosedAt("closed".equalsIgnoreCase(bitbucketIssue.getState()) ? bitbucketIssue.getUpdatedOn() : null);
 
-        // Etiquetas (Bitbucket no devuelve labels directamente, esto queda como lista vacía por ahora)
+        // Etiquetas vacías (Bitbucket no proporciona)
         result.setLabels(new java.util.ArrayList<>());
 
-        // Votos (si no está presente en el JSON puede ser null, se controla con ternario)
+        // Votos
         result.setVotes(bitbucketIssue.getVotes() != null ? bitbucketIssue.getVotes() : 0);
+
+        // Autor del issue (reporter)
+        result.setAuthor(UserTransformer.toGitMinerUser(bitbucketIssue.getReporter()));
 
         return result;
     }

@@ -36,4 +36,21 @@ public class UserTransformer {
         return result;
     }
 
+    public static MinerUser toGitMinerUser(Reporter reporter) {
+        if (reporter == null) return null;
+
+        MinerUser result = new MinerUser();
+        result.setUsername(reporter.getNickname());
+        result.setName(reporter.getDisplayName());
+        result.setAvatarUrl(reporter.getLinks() != null && reporter.getLinks().getAvatar() != null
+                ? reporter.getLinks().getAvatar().getHref()
+                : null);
+        result.setWebUrl(reporter.getLinks() != null && reporter.getLinks().getHtml() != null
+                ? reporter.getLinks().getHtml().getHref()
+                : null);
+
+        return result;
+    }
+
+
 }

@@ -80,7 +80,7 @@ public class IssueService {
 
     public int sendIssuesToGitMiner(String workspace, String repoSlug, int nIssues, int maxPages) {
         List<MinerIssue> issues = getIssues(workspace, repoSlug, nIssues, maxPages);
-        String gitMinerUrl = "http://localhost:8080/issues"; // URL real del endpoint de GitMiner
+        String gitMinerUrl = "http://localhost:8080/gitminer/issues"; // URL real del endpoint de GitMiner
 
         int sent = 0;
         for (MinerIssue issue : issues) {
@@ -92,7 +92,7 @@ public class IssueService {
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("Issue enviada correctamente: " + issue.getId());
+                    System.out.println("Issue enviada correctamente: " + issue.getAuthor());
                     sent++;
                 } else {
                     System.err.println(" Error al enviar issue " + issue.getId() + ": " + response.getStatusCode());

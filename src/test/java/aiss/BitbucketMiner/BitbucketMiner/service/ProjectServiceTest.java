@@ -1,6 +1,8 @@
 package aiss.BitbucketMiner.BitbucketMiner.service;
 
 import aiss.BitbucketMiner.BitbucketMiner.model.Project;
+import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerCommit;
+import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerIssue;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerProject;
 import aiss.BitbucketMiner.BitbucketMiner.transformer.ProjectTransformer;
 import org.junit.jupiter.api.DisplayName;
@@ -12,20 +14,25 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 @SpringBootTest
 public class ProjectServiceTest {
 
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    CommitService commitService;
+
+    @Autowired
+    IssueService issueService;
+
     @Test
     public void testToGitMinerProject() {
-        // Simula un Project básico
         Project project = new Project();
         project.setUuid("proj-1234");
         project.setName("Proyecto de prueba");
 
-        // Simula los enlaces HTML del proyecto
         aiss.BitbucketMiner.BitbucketMiner.model.issue.Html__2 html = new aiss.BitbucketMiner.BitbucketMiner.model.issue.Html__2();
         html.setHref("https://bitbucket.org/test/project");
 
@@ -33,7 +40,7 @@ public class ProjectServiceTest {
         links.setHtml(html);
         project.setLinks(links);
 
-        MinerProject result = ProjectTransformer.toGitMinerProject(project);
+        MinerProject result = ProjectTransformer.toGitMinerProject(project, List.of(), List.of());
 
         assertNotNull(result);
         assertEquals("proj-1234", result.getId());
@@ -45,8 +52,14 @@ public class ProjectServiceTest {
     @DisplayName("Obtener proyectos desde Bitbucket y mostrarlos")
     public void getProjects() {
         String workspace = "gentlero";
+        String repoSlug = "bitbucket-api";
+        int nCommits = 5;
+        int maxPages = 1;
 
-        List<MinerProject> projects = projectService.getProjects(workspace);
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nCommits, maxPages);
+
+        List<MinerProject> projects = projectService.getProjects(workspace, commits, issues);
 
         assertNotNull(projects);
         assertFalse(projects.isEmpty());
@@ -58,8 +71,14 @@ public class ProjectServiceTest {
     @DisplayName("Enviar proyectos desde Bitbucket a GitMiner")
     public void sendProjectsToGitMiner_test() {
         String workspace = "gentlero";
+        String repoSlug = "bitbucket-api";
+        int nCommits = 5;
+        int maxPages = 1;
 
-        int enviados = projectService.sendProjectsToGitMiner(workspace);
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nCommits, maxPages);
+
+        int enviados = projectService.sendProjectsToGitMiner(workspace, commits, issues);
         assertTrue(enviados > 0);
     }
 }

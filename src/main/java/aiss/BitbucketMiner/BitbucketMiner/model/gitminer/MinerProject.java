@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -18,6 +21,14 @@ public class MinerProject {
 
     @JsonProperty("webUrl")
     private String webUrl;
+
+    @Transient
+    @JsonProperty("commits")
+    private List<MinerCommit> commits;
+
+    @Transient
+    @JsonProperty("issues")
+    private List<MinerIssue> issues;
 
     @JsonProperty("id")
     public String getId() {
@@ -48,6 +59,48 @@ public class MinerProject {
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
     }
+    public List<MinerCommit> getCommits() {
+        return commits;
+    }
+
+    public void setCommits(List<MinerCommit> commits) {
+        this.commits = commits;
+    }
+
+    public List<MinerIssue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<MinerIssue> issues) {
+        this.issues = issues;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public String toString() {

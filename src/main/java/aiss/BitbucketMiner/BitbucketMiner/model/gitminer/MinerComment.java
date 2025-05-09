@@ -3,10 +3,7 @@ package aiss.BitbucketMiner.BitbucketMiner.model.gitminer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity  // para que funcione con JpaRepository
@@ -14,11 +11,14 @@ public class MinerComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore // ⚠️ Esto evita que se envíe al backend de GitMiner
-    private String id;
+    private Long id;
 
     @JsonProperty("body")
     private String body;
+
+    @JsonProperty("author")
+    @Embedded  // embebemos directamente los datos del usuario
+    private MinerUser author;
 
     @JsonProperty("created_at")
     private String createdAt;
@@ -27,12 +27,12 @@ public class MinerComment {
     private String updatedAt;
 
     @JsonProperty("id")
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -64,6 +64,14 @@ public class MinerComment {
     @JsonProperty("updated_at")
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public MinerUser getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(MinerUser author) {
+        this.author = author;
     }
 
     @Override

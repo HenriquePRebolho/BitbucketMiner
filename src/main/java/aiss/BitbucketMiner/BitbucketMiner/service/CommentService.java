@@ -63,7 +63,7 @@ CommentService {
 
     public int sendCommentsToGitMiner(String workspace, String repoSlug, int issueId, int maxPages) {
         List<MinerComment> comments = getComments(workspace, repoSlug, issueId, maxPages);
-        String gitMinerUrl = "http://localhost:8080/comments";
+        String gitMinerUrl = "http://localhost:8080/gitminer/comments";
 
         int sent = 0;
         for (MinerComment comment : comments) {
@@ -75,14 +75,14 @@ CommentService {
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("✔ Comentario enviado correctamente: " + comment.getId());
+                    System.out.println("Comentario enviado correctamente: " + comment.getAuthor());
                     sent++;
                 } else {
-                    System.err.println("✖ Error al enviar comentario " + comment.getId() + ": " + response.getStatusCode());
+                    System.err.println("Error al enviar comentario " + comment.getId() + ": " + response.getStatusCode());
                 }
 
             } catch (Exception e) {
-                System.err.println("⚠ Error al enviar comentario " + comment.getId() + ": " + e.getMessage());
+                System.err.println("Error al enviar comentario " + comment.getId() + ": " + e.getMessage());
             }
         }
         return sent;

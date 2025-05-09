@@ -1,5 +1,6 @@
 package aiss.BitbucketMiner.BitbucketMiner.transformer;
 
+import aiss.BitbucketMiner.BitbucketMiner.model.Commit.User;
 import aiss.BitbucketMiner.BitbucketMiner.model.Users;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerUser;
 import aiss.BitbucketMiner.BitbucketMiner.model.issue.Reporter;
@@ -51,6 +52,29 @@ public class UserTransformer {
 
         return result;
     }
+    public static MinerUser toGitMinerUser(User commentUser) {
+        if (commentUser == null) return null;
+
+        MinerUser result = new MinerUser();
+
+        result.setUsername(commentUser.getNickname());
+        result.setName(commentUser.getDisplayName());
+
+        result.setAvatarUrl(
+                commentUser.getLinks() != null && commentUser.getLinks().getAvatar() != null
+                        ? commentUser.getLinks().getAvatar().getHref()
+                        : null
+        );
+
+        result.setWebUrl(
+                commentUser.getLinks() != null && commentUser.getLinks().getHtml() != null
+                        ? commentUser.getLinks().getHtml().getHref()
+                        : null
+        );
+
+        return result;
+    }
+
 
 
 }

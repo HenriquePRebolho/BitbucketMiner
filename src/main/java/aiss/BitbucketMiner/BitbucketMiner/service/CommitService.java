@@ -21,7 +21,7 @@ public class CommitService {
     @Autowired
     RestTemplate restTemplate;
 
-    public List<MinerCommit> getCommits(String workspace, String repoSlug, int nCommits, int maxPages) {
+    public List<MinerCommit> getCommits(String workspace, String repoSlug, String projectUuid, int nCommits, int maxPages) {
         List<MinerCommit> result = new ArrayList<>();
 
         for (int page = 1; page <= maxPages; page++) {
@@ -47,18 +47,21 @@ public class CommitService {
 
                 if (commits != null) {
                     for (BitBucketCommit commit : commits) {
-                        result.add(CommitTransformer.toGitMinerCommit(commit));
+                        MinerCommit mc = CommitTransformer.toGitMinerCommit(commit);
+                        mc.setProjectId(projectUuid); //  Aquí asigno el projectId
+                        result.add(mc);
                     }
                 }
 
             } catch (JsonProcessingException e) {
                 System.err.println("Error parsing JSON from Bitbucket: " + e.getMessage());
-                e.printStackTrace(); // Opcional: comentar si no quieres stacktrace
+                e.printStackTrace();
             }
         }
 
         return result;
     }
+
 
     public MinerCommit getCommitById(String workspace, String repoSlug, String commitId) {
         String uri = String.format("https://api.bitbucket.org/2.0/repositories/%s/%s/commit/%s",
@@ -80,7 +83,10 @@ public class CommitService {
 
     // Metodo que nos piden para POST commits desde bitbucket a git miner
     public int sendCommitsToGitMiner(String workspace, String repoSlug, int nCommits, int maxPages) {
-        List<MinerCommit> commits = getCommits(workspace, repoSlug, nCommits, maxPages);
+
+        String projectUuid = getProjectUuidFromRepo(workspace, repoSlug);
+
+        List<MinerCommit> commits = getCommits(workspace, repoSlug,projectUuid, nCommits, maxPages);
         String gitMinerUrl = "http://localhost:8080/gitminer/commits"; // URL real del endpoint de GitMiner
 
         int sent = 0;
@@ -93,18 +99,41 @@ public class CommitService {
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("✔ Commit enviado correctamente: " + commit.getTitle());
+                    System.out.println("Commit enviado correctamente: " + commit.getTitle());
                     sent++;
                 } else {
-                    System.err.println("✖ Error al enviar commit " + commit.getId() + ": " + response.getStatusCode());
+                    System.err.println(" Error al enviar commit " + commit.getId() + ": " + response.getStatusCode());
                 }
 
             } catch (Exception e) {
-                System.err.println("⚠ Error al enviar commit " + commit.getId() + ": " + e.getMessage());
+                System.err.println(" Error al enviar commit " + commit.getId() + ": " + e.getMessage());
             }
         }
         return sent;
     }
+
+    public String getProjectUuidFromRepo(String workspace, String repoSlug) {
+        String uri = String.format("https://api.bitbucket.org/2.0/repositories/%s/%s", workspace, repoSlug);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, JsonNode.class);
+            JsonNode projectNode = response.getBody().get("project");
+            if (projectNode != null && projectNode.get("uuid") != null) {
+                return projectNode.get("uuid").asText();
+            } else {
+                System.err.println("No se encontró project UUID para el repo: " + repoSlug);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener UUID del proyecto desde el repo: " + e.getMessage());
+        }
+
+        return null;
+    }
+
 
 
     public void printCommit(MinerCommit commit) {

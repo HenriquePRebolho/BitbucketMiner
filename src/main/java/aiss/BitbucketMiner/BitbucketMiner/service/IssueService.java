@@ -21,7 +21,7 @@ public class IssueService {
     @Autowired
     RestTemplate restTemplate;
 
-    public List<MinerIssue> getIssues(String workspace, String repoSlug, int nIssues, int maxPages) {
+    public List<MinerIssue> getIssues(String workspace, String repoSlug, String projectUuid, int nIssues, int maxPages) {
         List<MinerIssue> result = new ArrayList<>();
 
         for (int page = 1; page <= maxPages; page++) {
@@ -47,7 +47,9 @@ public class IssueService {
 
                 if (issues != null) {
                     for (Issue issue : issues) {
-                        result.add(IssueTransformer.toGitMinerIssue(issue));
+                        MinerIssue mi = IssueTransformer.toGitMinerIssue(issue);
+                        mi.setProjectId(projectUuid); //  Aquí asignamos el projectId
+                        result.add(mi);
                     }
                 }
 
@@ -79,8 +81,9 @@ public class IssueService {
     }
 
     public int sendIssuesToGitMiner(String workspace, String repoSlug, int nIssues, int maxPages) {
-        List<MinerIssue> issues = getIssues(workspace, repoSlug, nIssues, maxPages);
-        String gitMinerUrl = "http://localhost:8080/gitminer/issues"; // URL real del endpoint de GitMiner
+        String projectUuid = getProjectUuidFromRepo(workspace, repoSlug);
+        List<MinerIssue> issues = getIssues(workspace, repoSlug, projectUuid, nIssues, maxPages);
+        String gitMinerUrl = "http://localhost:8080/gitminer/issues";
 
         int sent = 0;
         for (MinerIssue issue : issues) {
@@ -95,19 +98,41 @@ public class IssueService {
                     System.out.println("Issue enviada correctamente: " + issue.getAuthor());
                     sent++;
                 } else {
-                    System.err.println(" Error al enviar issue " + issue.getId() + ": " + response.getStatusCode());
+                    System.err.println("Error al enviar issue " + issue.getTitle() + ": " + response.getStatusCode());
                 }
 
             } catch (Exception e) {
-                System.err.println(" Error al enviar issue " + issue.getId() + ": " + e.getMessage());
+                System.err.println("Error al enviar issue " + issue.getTitle() + ": " + e.getMessage());
             }
         }
         return sent;
     }
 
+    public String getProjectUuidFromRepo(String workspace, String repoSlug) {
+        String uri = String.format("https://api.bitbucket.org/2.0/repositories/%s/%s", workspace, repoSlug);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, JsonNode.class);
+            JsonNode projectNode = response.getBody().get("project");
+            if (projectNode != null && projectNode.get("uuid") != null) {
+                return projectNode.get("uuid").asText();
+            } else {
+                System.err.println("No se encontró project UUID para el repo: " + repoSlug);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener UUID del proyecto desde el repo: " + e.getMessage());
+        }
+
+        return null;
+    }
+
     public void printIssue(MinerIssue issue) {
         if (issue != null) {
-            System.out.println(" ISSUE [" + issue.getId() + "]");
+            System.out.println(" ISSUE [");
             System.out.println("    - Title: " + issue.getTitle());
             System.out.println("    - Description: " + issue.getDescription());
             System.out.println("    - State: " + issue.getState());

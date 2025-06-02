@@ -45,6 +45,9 @@ public class MinerIssue {
     @Embedded  // embebemos directamente los datos del usuario
     private MinerUser author;
 
+    @JsonIgnore
+    private String projectId;
+
     // Getters y setters
 
     public String getId() {
@@ -126,6 +129,14 @@ public class MinerIssue {
 
     public void setAuthor(MinerUser author) {
         this.author = author;
+    }
+
+    public String getProjectId() {
+        return projectId;
+
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     @Override

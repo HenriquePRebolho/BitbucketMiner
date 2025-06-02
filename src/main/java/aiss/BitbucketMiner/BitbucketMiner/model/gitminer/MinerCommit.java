@@ -14,7 +14,7 @@ public class MinerCommit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore // ⚠️ Esto evita que se envíe al backend de GitMiner
+    @JsonIgnore
     private String id;
 
     @JsonProperty("title")
@@ -34,6 +34,11 @@ public class MinerCommit {
 
     @JsonProperty("web_url")
     private String web_url;
+
+
+    @JsonIgnore
+    private String projectId;
+
 
     public String getId() {
         return id;
@@ -91,6 +96,13 @@ public class MinerCommit {
         this.web_url = web_url;
     }
 
+    public String getProjectId() {
+        return projectId;
+
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
     @Override
     public String toString() {
         return "MinerCommit{" +

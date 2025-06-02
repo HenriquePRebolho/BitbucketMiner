@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bitbucket")
-public class CommitController {
+public class    CommitController {
 
     @Autowired
     CommitService commitService;
@@ -23,7 +23,8 @@ public class CommitController {
             @RequestParam(defaultValue = "5") int nCommits,
             @RequestParam(defaultValue = "2") int maxPages
     ) {
-        return commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
+        String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
+        return commitService.getCommits(workspace, repoSlug, projectUuid, nCommits, maxPages);
     }
 
     @GetMapping("/commits/{id}")

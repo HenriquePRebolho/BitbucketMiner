@@ -21,7 +21,8 @@ public class IssueController {
             @RequestParam(defaultValue = "5") int nIssues,
             @RequestParam(defaultValue = "2") int maxPages
     ) {
-        return issueService.getIssues(workspace, repoSlug, nIssues, maxPages);
+        String projectUuid = issueService.getProjectUuidFromRepo(workspace, repoSlug);
+        return issueService.getIssues(workspace, repoSlug,projectUuid, nIssues, maxPages);
     }
 
     @GetMapping("/issues/{id}")

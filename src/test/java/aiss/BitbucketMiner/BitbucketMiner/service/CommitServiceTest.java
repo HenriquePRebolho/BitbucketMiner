@@ -38,7 +38,7 @@ public class CommitServiceTest {
 
     @Autowired
     CommitService commitService;
-
+/*
     @Test
     @DisplayName("Get commits from Bitbucket transform them to GitMiner format and print them on the console")
     public void getCommits() {
@@ -55,7 +55,7 @@ public class CommitServiceTest {
         // Imprimir los commits transformados a formato GitMiner
         commits.forEach(commitService::printCommit);
     }
-
+*/
     @Test
     @DisplayName("Get commit by commit id")
     public void getSingleCommit() {

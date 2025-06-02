@@ -56,8 +56,10 @@ public class ProjectServiceTest {
         int nCommits = 5;
         int maxPages = 1;
 
-        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nCommits, maxPages);
+        String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
+
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug,projectUuid, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug,projectUuid, nCommits, maxPages);
 
         List<MinerProject> projects = projectService.getProjects(workspace, commits, issues);
 
@@ -75,10 +77,14 @@ public class ProjectServiceTest {
         int nCommits = 5;
         int maxPages = 1;
 
-        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nCommits, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nCommits, maxPages);
+        String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
+
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, projectUuid, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, projectUuid, nCommits, maxPages);
 
         int enviados = projectService.sendProjectsToGitMiner(workspace, commits, issues);
         assertTrue(enviados > 0);
     }
+
+
 }

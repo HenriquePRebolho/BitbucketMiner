@@ -1,6 +1,7 @@
 package aiss.BitbucketMiner.BitbucketMiner.model.gitminer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,6 +10,7 @@ import jakarta.persistence.Transient;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class MinerProject {
 
@@ -19,7 +21,7 @@ public class MinerProject {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("webUrl")
+    @JsonProperty("web_url") // antes teniamos webUrl
     private String webUrl;
 
     @Transient

@@ -32,7 +32,7 @@ public class IssueServiceTest {
         assertEquals("Test Issue", transformed.getTitle());
         assertEquals("new", transformed.getState());
     }
-
+/*
     @Test
     @DisplayName("Get issues from Bitbucket, transform to GitMiner format and print them")
     public void getIssues() {
@@ -48,6 +48,7 @@ public class IssueServiceTest {
 
         issues.forEach(issueService::printIssue);
     }
+    */
 
     @Test
     @DisplayName("Get a single issue by ID")

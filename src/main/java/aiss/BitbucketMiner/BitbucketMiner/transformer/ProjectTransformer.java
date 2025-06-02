@@ -16,7 +16,7 @@ public class ProjectTransformer {
                                                  List<MinerCommit> bitbucketCommits,
                                                  List<MinerIssue> bitbucketIssues) {
         MinerProject target = new MinerProject();
-        // Usa el UUID del proyecto como ID
+
         target.setName(source.getName());
 
         if (source.getLinks() != null && source.getLinks().getHtml() != null) {
@@ -24,6 +24,7 @@ public class ProjectTransformer {
         }
 
         if (bitbucketCommits != null) {
+
             target.setCommits(bitbucketCommits);  // ya están en formato MinerCommit
         }
 

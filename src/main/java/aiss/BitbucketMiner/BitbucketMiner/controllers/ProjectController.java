@@ -31,21 +31,30 @@ public class ProjectController {
             @RequestParam(defaultValue = "5") int nItems,
             @RequestParam(defaultValue = "1") int maxPages
     ) {
-        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nItems, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nItems, maxPages);
+        String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
+
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, projectUuid, nItems, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, projectUuid, nItems, maxPages);
         return projectService.getProjects(workspace, commits, issues);
     }
 
-    @PostMapping("/{workspace}/projects")
-    public String sendProjectsToGitMiner(
-            @PathVariable String workspace,
-            @RequestParam(defaultValue = "bitbucket-api") String repoSlug,
-            @RequestParam(defaultValue = "5") int nItems,
-            @RequestParam(defaultValue = "1") int maxPages
+
+    @PostMapping("/{owner}/{repoName}")
+    public String sendProjectFromRepoToGitMiner(
+            @PathVariable String owner,
+            @PathVariable String repoName,
+            @RequestParam(defaultValue = "5") int sinceCommits,
+            @RequestParam(defaultValue = "30") int sinceIssues,
+            @RequestParam(defaultValue = "2") int maxPages
     ) {
-        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, nItems, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, nItems, maxPages);
-        int saved = projectService.sendProjectsToGitMiner(workspace, commits, issues);
-        return saved + " proyectos enviados a GitMiner correctamente.";
+        String projectUuid = commitService.getProjectUuidFromRepo(owner, repoName);
+        String projectUuidIssue = issueService.getProjectUuidFromRepo(owner, repoName);
+
+        List<MinerCommit> commits = commitService.getCommits(owner, repoName, projectUuid, sinceCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(owner, repoName, projectUuidIssue, sinceIssues, maxPages);
+
+        int sent = projectService.sendProjectsToGitMiner(owner, commits, issues);
+        return sent + " proyecto enviado a GitMiner correctamente.";
     }
+
 }

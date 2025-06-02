@@ -46,13 +46,18 @@ public class ProjectService {
 
             if (projects != null) {
                 for (Project p : projects) {
-                    // Filtra commits e issues que pertenecen a este proyecto
+                    String projectUuid = p.getUuid(); // UUID desde Bitbucket
+
+                    // Filtra solo los commits que tengan ese projectId
                     List<MinerCommit> projectCommits = allCommits.stream()
-                            .filter(c -> c.getId().equals(p.getUuid())) // o getId()
+                            .filter(c -> projectUuid.equals(c.getProjectId()))
+                            .map(c -> { c.setId(null); return c; }) // Limpiar ID
                             .toList();
 
+                    // Filtra solo los issues que tengan ese projectId
                     List<MinerIssue> projectIssues = allIssues.stream()
-                            .filter(i -> i.getId().equals(p.getUuid()))
+                            .filter(i -> projectUuid.equals(i.getProjectId()))
+                            .map(i -> { i.setId(null); return i; }) // Limpiar ID
                             .toList();
 
                     result.add(ProjectTransformer.toGitMinerProject(p, projectCommits, projectIssues));
@@ -67,7 +72,12 @@ public class ProjectService {
 
         return result;
     }
+
+
+
+
     public int sendProjectsToGitMiner(String workspace ,List<MinerCommit> commits, List<MinerIssue> issues) {
+        System.out.println("CONSTRUYENDO PROJECTS...");
         List<MinerProject> projects = getProjects(workspace, commits, issues );
         String gitMinerUrl = "http://localhost:8080/gitminer/projects"; // Ajusta si tu endpoint es diferente
 
@@ -76,19 +86,24 @@ public class ProjectService {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
+                System.out.println("ANTES DEL REQUEST");
                 HttpEntity<MinerProject> request = new HttpEntity<>(project, headers);
+
+                System.out.println("Enviando proyecto: " + new ObjectMapper().writeValueAsString(project));
+                System.out.println("AQUI------------------------------------------------------------");
+
 
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("Proyecto enviado correctamente: " + project.getId());
+                    System.out.println("Proyecto enviado correctamente: " + project.getName());
                     sent++;
                 } else {
-                    System.err.println("Error al enviar proyecto " + project.getId() + ": " + response.getStatusCode());
+                    System.err.println("Error al enviar proyecto " + project.getName() + ": " + response.getStatusCode());
                 }
 
             } catch (Exception e) {
-                System.err.println("Error al enviar proyecto " + project.getId() + ": " + e.getMessage());
+                System.err.println("Error al enviar proyecto " + project.getName() + ": " + e.getMessage());
             }
         }
 
@@ -97,7 +112,7 @@ public class ProjectService {
 
     public void printProject(MinerProject project) {
         if (project != null) {
-            System.out.println(" PROJECT [" + project.getId() + "]");
+            System.out.println(" PROJECT [" );
             System.out.println("    - Name: " + project.getName());
             System.out.println("    - Web URL: " + project.getWebUrl());
         } else {

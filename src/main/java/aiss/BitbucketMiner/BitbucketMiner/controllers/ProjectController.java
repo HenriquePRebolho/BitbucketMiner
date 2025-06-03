@@ -24,17 +24,19 @@ public class ProjectController {
     @Autowired
     IssueService issueService;
 
-    @GetMapping("/{workspace}/projects")
+    @GetMapping("/{workspace}/{repoSlug}")
     public List<MinerProject> getProjects(
             @PathVariable String workspace,
-            @RequestParam(defaultValue = "bitbucket-api") String repoSlug,
-            @RequestParam(defaultValue = "5") int nItems,
+            @PathVariable String repoSlug,
+            @RequestParam(defaultValue = "5") int nCommits,
+            @RequestParam(defaultValue = "5") int nIssues,
             @RequestParam(defaultValue = "1") int maxPages
     ) {
         String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
 
-        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, projectUuid, nItems, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, projectUuid, nItems, maxPages);
+        List<MinerCommit> commits = commitService.getCommits(workspace, repoSlug, projectUuid, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, projectUuid, nIssues, maxPages);
+
         return projectService.getProjects(workspace, commits, issues);
     }
 
@@ -47,6 +49,7 @@ public class ProjectController {
             @RequestParam(defaultValue = "30") int sinceIssues,
             @RequestParam(defaultValue = "2") int maxPages
     ) {
+
         String projectUuid = commitService.getProjectUuidFromRepo(owner, repoName);
         String projectUuidIssue = issueService.getProjectUuidFromRepo(owner, repoName);
 
@@ -54,7 +57,7 @@ public class ProjectController {
         List<MinerIssue> issues = issueService.getIssues(owner, repoName, projectUuidIssue, sinceIssues, maxPages);
 
         int sent = projectService.sendProjectsToGitMiner(owner, commits, issues);
-        return sent + " proyecto enviado a GitMiner correctamente.";
+        return sent + " proyecto enviado a GitMiner correctamente." ;
     }
 
 }

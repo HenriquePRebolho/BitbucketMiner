@@ -79,6 +79,7 @@ public class UserService {
         return sendUserToGitMiner(user);
     }
 
+
     public void printUser(MinerUser user) {
         if (user != null) {
             System.out.println(" USER [" + user.getId() + "]");

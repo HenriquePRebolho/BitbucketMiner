@@ -90,7 +90,6 @@ public class ProjectService {
                 HttpEntity<MinerProject> request = new HttpEntity<>(project, headers);
 
                 System.out.println("Enviando proyecto: " + new ObjectMapper().writeValueAsString(project));
-                System.out.println("AQUI------------------------------------------------------------");
 
 
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);

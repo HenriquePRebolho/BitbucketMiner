@@ -1,7 +1,9 @@
 package aiss.BitbucketMiner.BitbucketMiner.service;
 
+import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerComment;
 import aiss.BitbucketMiner.BitbucketMiner.model.issue.Issue;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerIssue;
+import aiss.BitbucketMiner.BitbucketMiner.transformer.CommentTransformer;
 import aiss.BitbucketMiner.BitbucketMiner.transformer.IssueTransformer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -92,6 +94,8 @@ public class IssueService {
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 HttpEntity<MinerIssue> request = new HttpEntity<>(issue, headers);
 
+                System.out.println("Enviando proyecto: " + new ObjectMapper().writeValueAsString(issues));
+
                 ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
@@ -129,6 +133,50 @@ public class IssueService {
 
         return null;
     }
+
+    // este metodo lo tenemos que usar para extraer los comentrarios de cada issue
+
+    public static List<MinerComment> getCommentsFromIssue(Issue bitbucketIssue) {
+        List<MinerComment> result = new ArrayList<>();
+
+        String commentsUrl = bitbucketIssue.getLinks().getComments().getHref();
+
+        if (commentsUrl != null) {
+            try {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+                HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+                ResponseEntity<JsonNode> response = new RestTemplate().exchange(
+                        commentsUrl, HttpMethod.GET, requestEntity, JsonNode.class
+                );
+
+                JsonNode valuesNode = response.getBody().get("values");
+                ObjectMapper mapper = new ObjectMapper();
+
+                for (JsonNode node : valuesNode) {
+                    aiss.BitbucketMiner.BitbucketMiner.model.Comments original =
+                            mapper.treeToValue(node, aiss.BitbucketMiner.BitbucketMiner.model.Comments.class);
+
+                    // Validación: ignorar comentarios sin contenido válido
+                    if (original.getContent() != null && original.getContent().getRaw() != null) {
+                        MinerComment transformed = CommentTransformer.toGitMinerComment(original);
+                        if (transformed != null && transformed.getBody() != null) {
+                            result.add(transformed);
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                System.err.println("Error al obtener comentarios del issue: " + e.getMessage());
+            }
+        }
+
+        return result;
+    }
+
+
+
 
     public void printIssue(MinerIssue issue) {
         if (issue != null) {

@@ -45,6 +45,10 @@ public class MinerIssue {
     @Embedded  // embebemos directamente los datos del usuario
     private MinerUser author;
 
+    @Transient
+    @JsonProperty("comments")
+    private List<MinerComment> comments;
+
     @JsonIgnore
     private String projectId;
 
@@ -130,6 +134,14 @@ public class MinerIssue {
     public void setAuthor(MinerUser author) {
         this.author = author;
     }
+
+    public List<MinerComment> getComments() {
+        return comments;
+    }
+    public void setComments(List<MinerComment> comments) {
+        this.comments = comments;
+    }
+
 
     public String getProjectId() {
         return projectId;

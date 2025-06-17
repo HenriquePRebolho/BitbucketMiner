@@ -32,7 +32,7 @@ public class IssueService {
                     workspace, repoSlug, nIssues, page);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
             ResponseEntity<JsonNode> response = restTemplate.exchange(
@@ -44,15 +44,23 @@ public class IssueService {
 
             try {
                 JsonNode valuesNode = response.getBody().get("values");
+                if (valuesNode == null || !valuesNode.isArray() || valuesNode.size() == 0) {
+                    // No hay más issues que procesar, salimos del bucle
+                    break;
+                }
+
                 ObjectMapper mapper = new ObjectMapper();
                 Issue[] issues = mapper.treeToValue(valuesNode, Issue[].class);
 
-                if (issues != null) {
-                    for (Issue issue : issues) {
-                        MinerIssue mi = IssueTransformer.toGitMinerIssue(issue);
-                        mi.setProjectId(projectUuid); //  Aquí asignamos el projectId
-                        result.add(mi);
-                    }
+                for (Issue issue : issues) {
+                    MinerIssue mi = IssueTransformer.toGitMinerIssue(issue);
+                    mi.setProjectId(projectUuid);
+                    result.add(mi);
+                }
+
+                // Si el número de issues recibidos es menor al pagelen, no hay más páginas
+                if (valuesNode.size() < nIssues) {
+                    break;
                 }
 
             } catch (JsonProcessingException e) {
@@ -63,6 +71,7 @@ public class IssueService {
 
         return result;
     }
+
 
     public MinerIssue getIssueById(String workspace, String repoSlug, String issueId) {
         String uri = String.format("https://api.bitbucket.org/2.0/repositories/%s/%s/issues/%s",

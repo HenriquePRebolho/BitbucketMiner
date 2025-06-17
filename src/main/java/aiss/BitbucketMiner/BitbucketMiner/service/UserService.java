@@ -7,11 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.Set;
+import java.util.HashSet;
+
+
 
 import java.util.Base64;
 
 @Service
 public class UserService {
+
+    private final Set<String> sentUsernames = new HashSet<>();  // necesitamos una cache temporal para no enviar usuarios duplicados
 
     @Autowired
     RestTemplate restTemplate;
@@ -47,6 +53,10 @@ public class UserService {
 
     // Enviar el usuario autenticado a GitMiner
     public boolean sendUserToGitMiner(MinerUser user) {
+        if (sentUsernames.contains(user.getUsername())) {
+            return true; // ya fue enviado
+        }
+
         String gitMinerUrl = "http://localhost:8080/gitminer/users";
 
         try {
@@ -57,6 +67,7 @@ public class UserService {
             ResponseEntity<String> response = restTemplate.postForEntity(gitMinerUrl, request, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
+                sentUsernames.add(user.getUsername()); //  Se añade si fue enviado correctamente
                 System.out.println("Usuario enviado correctamente: " + user.getName());
                 return true;
             } else {
@@ -69,6 +80,7 @@ public class UserService {
             return false;
         }
     }
+
 //PARA EL CONTROLADOR
     public boolean sendUserToGitMiner(String username, String token) {
         MinerUser user = getAuthenticatedUser(username, token);

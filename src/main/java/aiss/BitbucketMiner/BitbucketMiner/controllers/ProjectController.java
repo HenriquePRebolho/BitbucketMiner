@@ -45,16 +45,16 @@ public class ProjectController {
     public String sendProjectFromRepoToGitMiner(
             @PathVariable String owner,
             @PathVariable String repoName,
-            @RequestParam(defaultValue = "5") int sinceCommits,
-            @RequestParam(defaultValue = "30") int sinceIssues,
+            @RequestParam(defaultValue = "5") int nCommits,
+            @RequestParam(defaultValue = "5") int nIssues,
             @RequestParam(defaultValue = "2") int maxPages
     ) {
 
         String projectUuid = commitService.getProjectUuidFromRepo(owner, repoName);
         String projectUuidIssue = issueService.getProjectUuidFromRepo(owner, repoName);
 
-        List<MinerCommit> commits = commitService.getCommits(owner, repoName, projectUuid, sinceCommits, maxPages);
-        List<MinerIssue> issues = issueService.getIssues(owner, repoName, projectUuidIssue, sinceIssues, maxPages);
+        List<MinerCommit> commits = commitService.getCommits(owner, repoName, projectUuid, nCommits, maxPages);
+        List<MinerIssue> issues = issueService.getIssues(owner, repoName, projectUuidIssue, nIssues, maxPages);
 
         int sent = projectService.sendProjectsToGitMiner(owner, commits, issues);
         return sent + " proyecto enviado a GitMiner correctamente." ;

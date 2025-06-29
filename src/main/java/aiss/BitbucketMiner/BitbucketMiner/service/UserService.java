@@ -52,6 +52,7 @@ public class UserService {
     }
 
     // Enviar el usuario autenticado a GitMiner
+    // Metodo usado para enviar el usuario nuestro a git miner
     public boolean sendUserToGitMiner(MinerUser user) {
         if (sentUsernames.contains(user.getUsername())) {
             return true; // ya fue enviado

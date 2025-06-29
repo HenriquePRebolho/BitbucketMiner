@@ -19,33 +19,32 @@ public class IssueTransformer {
         if (bitbucketIssue == null) return null;
 
         MinerIssue result = new MinerIssue();
+        List<String> labels = new ArrayList<>();
 
-        // Title y Description (content.raw)
+        labels.add(bitbucketIssue.getKind());
+
         result.setTitle(bitbucketIssue.getTitle());
         result.setDescription(bitbucketIssue.getContent() != null ? bitbucketIssue.getContent().getRaw() : null);
 
-        // Estado (open/closed/etc.)
         result.setState(bitbucketIssue.getState());
 
-        // Fechas
         result.setCreatedAt(bitbucketIssue.getCreatedOn());
+
         result.setUpdatedAt(bitbucketIssue.getUpdatedOn());
 
-        // Fecha de cierre (solo si el estado es "closed")
         result.setClosedAt("closed".equalsIgnoreCase(bitbucketIssue.getState()) ? bitbucketIssue.getUpdatedOn() : null);
 
-        // Etiquetas vacías (Bitbucket no proporciona)
         result.setLabels(new java.util.ArrayList<>());
 
-        // Votos
         result.setVotes(bitbucketIssue.getVotes() != null ? bitbucketIssue.getVotes() : 0);
 
-        // Autor del issue (reporter)
         result.setAuthor(UserTransformer.toGitMinerUser(bitbucketIssue.getReporter()));
 
-        // Comentarios
         List<MinerComment> comments = IssueService.getCommentsFromIssue(bitbucketIssue);
+
         result.setComments(comments);
+
+        result.setLabels(labels);
 
 
 

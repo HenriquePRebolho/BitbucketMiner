@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +18,10 @@ import java.util.List;
 
 @Service
 public class CommitService {
+
+    @Value("${gitminer.api.url}")
+    private String gitminerApiUrl;
+
 
     @Autowired
     RestTemplate restTemplate;
@@ -87,7 +92,7 @@ public class CommitService {
         String projectUuid = getProjectUuidFromRepo(workspace, repoSlug);
 
         List<MinerCommit> commits = getCommits(workspace, repoSlug,projectUuid, nCommits, maxPages);
-        String gitMinerUrl = "http://localhost:8080/gitminer/commits"; // URL real del endpoint de GitMiner
+        String gitMinerUrl = gitminerApiUrl + "/commits"; // URL real del endpoint de GitMiner
 
         int sent = 0;
         for (MinerCommit commit : commits) {
@@ -111,6 +116,8 @@ public class CommitService {
         }
         return sent;
     }
+
+    // estre metodo es importante porque lo usamos para asociar issues commits users y comments de un mismo project
 
     public String getProjectUuidFromRepo(String workspace, String repoSlug) {
         String uri = String.format("https://api.bitbucket.org/2.0/repositories/%s/%s", workspace, repoSlug);

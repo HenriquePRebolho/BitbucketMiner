@@ -4,6 +4,7 @@ import aiss.BitbucketMiner.BitbucketMiner.model.Users;
 import aiss.BitbucketMiner.BitbucketMiner.model.gitminer.MinerUser;
 import aiss.BitbucketMiner.BitbucketMiner.transformer.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +17,8 @@ import java.util.Base64;
 
 @Service
 public class UserService {
+    @Value("${gitminer.api.url}")
+    private String gitminerApiUrl;
 
     private final Set<String> sentUsernames = new HashSet<>();  // necesitamos una cache temporal para no enviar usuarios duplicados
 
@@ -58,7 +61,7 @@ public class UserService {
             return true; // ya fue enviado
         }
 
-        String gitMinerUrl = "http://localhost:8080/gitminer/users";
+        String gitMinerUrl = gitminerApiUrl + "/users";
 
         try {
             HttpHeaders headers = new HttpHeaders();

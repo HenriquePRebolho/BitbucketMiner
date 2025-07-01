@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,8 @@ import java.util.List;
 @Service
 public class
 CommentService {
+    @Value("${gitminer.api.url}")
+    private String gitminerApiUrl;
 
     @Autowired
     RestTemplate restTemplate;
@@ -63,7 +66,7 @@ CommentService {
 
     public int sendCommentsToGitMiner(String workspace, String repoSlug, int issueId, int maxPages) {
         List<MinerComment> comments = getComments(workspace, repoSlug, issueId, maxPages);
-        String gitMinerUrl = "http://localhost:8080/gitminer/comments";
+        String gitMinerUrl = gitminerApiUrl + "/comments";
 
         int sent = 0;
         for (MinerComment comment : comments) {

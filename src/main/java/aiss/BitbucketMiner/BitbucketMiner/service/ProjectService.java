@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +21,9 @@ import java.util.List;
 
 @Service
 public class ProjectService {
+
+    @Value("${gitminer.api.url}")
+    private String gitminerApiUrl;
 
     @Autowired
     RestTemplate restTemplate;
@@ -79,7 +83,7 @@ public class ProjectService {
     public int sendProjectsToGitMiner(String workspace ,List<MinerCommit> commits, List<MinerIssue> issues) {
         System.out.println("CONSTRUYENDO PROJECTS...");
         List<MinerProject> projects = getProjects(workspace, commits, issues );
-        String gitMinerUrl = "http://localhost:8080/gitminer/projects"; // Ajusta si tu endpoint es diferente
+        String gitMinerUrl = gitminerApiUrl + "/projects";
 
         int sent = 0;
         for (MinerProject project : projects) {

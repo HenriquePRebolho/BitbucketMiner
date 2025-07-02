@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 public class CommitServiceTest {
 
+    @Value("${bitbucketminer.maxpages}")
+    private int maxPages;
+
+    @Value("${bitbucketminer.ncommits}")
+    private int nCommits;
+
     @Test
     public void testToGitMinerCommit() throws Exception {
         // Simulación de un commit mínimo
@@ -31,7 +38,7 @@ public class CommitServiceTest {
         MinerCommit transformed = CommitTransformer.toGitMinerCommit(bitbucketCommit);
 
 
-        assertNotNull(transformed);
+        assertNotNull(transformed, "El MinerCommit no debe ser nulo");
         assertEquals("abc123", transformed.getId());
         assertEquals("Mensaje de prueba", transformed.getMessage());
     }
@@ -73,8 +80,6 @@ public class CommitServiceTest {
     public void sendCommitsToGitMiner_test() throws Exception {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int nCommits = 5;
-        int maxPages = 1;
 
         commitService.sendCommitsToGitMiner(workspace, repoSlug, nCommits, maxPages);
     }

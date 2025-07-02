@@ -30,7 +30,7 @@ public class UserServiceTest {
 
         MinerUser result = UserTransformer.toGitMinerUser(bitbucketUser);
 
-        assertNotNull(result);
+        assertNotNull(result, "El MinerUser no puede ser nula");
         assertEquals("{abc-123}", result.getId());
         assertEquals("testuser", result.getUsername());
         assertEquals("Test User", result.getName());
@@ -41,9 +41,9 @@ public class UserServiceTest {
     public void getAuthenticatedUserTest() {
         MinerUser user = userService.getAuthenticatedUser(USERNAME, APP_PASSWORD);
 
-        assertNotNull(user);
-        assertNotNull(user.getId());
-        assertNotNull(user.getUsername());
+        assertNotNull(user, "El usuario autenticado no puede ser nulo");
+        assertNotNull(user.getId(), "El id del usuario autenticado no puede ser nulo");
+        assertNotNull(user.getUsername(), "El username del usuario autenticado no puede ser nulo");
 
         userService.printUser(user);
     }
@@ -52,7 +52,7 @@ public class UserServiceTest {
     @DisplayName("Enviar usuario a GitMiner")
     public void sendUserToGitMinerTest() {
         MinerUser user = userService.getAuthenticatedUser(USERNAME, APP_PASSWORD);
-        assertNotNull(user);
+        assertNotNull(user, "El MinerUser no puede ser nulo");
 // para ver el usuario que estamos enviando
         System.out.println("Usuario a enviar:");
         System.out.println(user);

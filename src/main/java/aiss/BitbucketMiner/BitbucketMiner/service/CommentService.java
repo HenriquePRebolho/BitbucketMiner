@@ -22,6 +22,9 @@ CommentService {
     @Value("${gitminer.api.url}")
     private String gitminerApiUrl;
 
+    @Value("${bitbucketminer.baseuri}")
+    private String baseuri;
+
     @Autowired
     RestTemplate restTemplate;
 
@@ -29,9 +32,8 @@ CommentService {
         List<MinerComment> result = new ArrayList<>();
 
         for (int page = 1; page <= maxPages; page++) {
-            String uri = String.format(
-                    "https://api.bitbucket.org/2.0/repositories/%s/%s/issues/%d/comments?page=%d",
-                    workspace, repoSlug, issueId, page);
+
+            String uri = baseuri  + workspace + "/" + repoSlug + "/issues/" + issueId + "/comments?page=" + page ;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

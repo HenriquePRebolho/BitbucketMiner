@@ -24,6 +24,9 @@ public class IssueService {
     @Value("${gitminer.api.url}")
     private String gitminerApiUrl;
 
+    @Value("${bitbucketminer.baseuri}")
+    private String baseuri;
+
     @Autowired
     RestTemplate restTemplate;
 
@@ -31,9 +34,8 @@ public class IssueService {
         List<MinerIssue> result = new ArrayList<>();
 
         for (int page = 1; page <= maxPages; page++) {
-            String uri = String.format(
-                    "https://api.bitbucket.org/2.0/repositories/%s/%s/issues?pagelen=%d&page=%d",
-                    workspace, repoSlug, nIssues, page);
+
+            String uri = baseuri + workspace + "/" + repoSlug + "/issues?pagelen=" + nIssues + "&page=" + page;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(List.of(MediaType.APPLICATION_JSON));

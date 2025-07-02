@@ -22,6 +22,9 @@ public class CommitService {
     @Value("${gitminer.api.url}")
     private String gitminerApiUrl;
 
+    @Value("${bitbucketminer.baseuri}")
+    private String baseuri;
+
 
     @Autowired
     RestTemplate restTemplate;
@@ -30,9 +33,8 @@ public class CommitService {
         List<MinerCommit> result = new ArrayList<>();
 
         for (int page = 1; page <= maxPages; page++) {
-            String uri = String.format(
-                    "https://api.bitbucket.org/2.0/repositories/%s/%s/commits?pagelen=%d&page=%d",
-                    workspace, repoSlug, nCommits, page);
+            String uri = baseuri + workspace + "/" + repoSlug + "/commits?pagelen=" + nCommits + "&page=" + page;
+
 
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

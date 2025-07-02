@@ -6,6 +6,7 @@ import aiss.BitbucketMiner.BitbucketMiner.transformer.IssueTransformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -14,6 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class IssueServiceTest {
+
+    @Value("${bitbucketminer.maxpages}")
+    private int maxPages;
+
+    @Value("${bitbucketminer.nissues}")
+    private int nIssues;
 
     @Autowired
     IssueService issueService;
@@ -27,7 +34,7 @@ public class IssueServiceTest {
 
         MinerIssue transformed = IssueTransformer.toGitMinerIssue(bitbucketIssue);
 
-        assertNotNull(transformed);
+        assertNotNull(transformed, "El MinerIssue no debe ser nulo");
         assertEquals("123", transformed.getId());
         assertEquals("Test Issue", transformed.getTitle());
         assertEquals("new", transformed.getState());
@@ -58,7 +65,7 @@ public class IssueServiceTest {
         String issueId = "1"; // Debes usar un ID real aquí
 
         MinerIssue issue = issueService.getIssueById(workspace, repoSlug, issueId);
-        assertNotNull(issue);
+        assertNotNull(issue, "El MinerIssue no debe ser nulo");
         issueService.printIssue(issue);
     }
 
@@ -67,11 +74,9 @@ public class IssueServiceTest {
     public void sendIssuesToGitMiner_test() {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int nIssues = 5;
-        int maxPages = 1;
 
         int sent = issueService.sendIssuesToGitMiner(workspace, repoSlug, nIssues, maxPages);
         System.out.println("Issues enviados: " + sent);
-        assertTrue(sent > 0);
+        assertTrue(sent > 0, "El número de issues enviadas no puede ser menor que 1");
     }
 }

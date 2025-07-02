@@ -6,6 +6,7 @@ import aiss.BitbucketMiner.BitbucketMiner.transformer.CommentTransformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -14,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class CommentServiceTest {
+
+    @Value("2")
+    private int maxPages;
+
+    private final int issueId = 1;
 
     @Autowired
     CommentService commentService;
@@ -42,8 +48,6 @@ public class CommentServiceTest {
     public void getComments() {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int issueId = 1;
-        int maxPages = 1;
 
         List<MinerComment> comments = commentService.getComments(workspace, repoSlug, issueId, maxPages);
 
@@ -59,8 +63,6 @@ public class CommentServiceTest {
     public void sendCommentsToGitMiner_test() {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int issueId = 1;
-        int maxPages = 1;
 
         commentService.sendCommentsToGitMiner(workspace, repoSlug, issueId, maxPages);
     }

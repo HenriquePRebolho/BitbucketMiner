@@ -8,6 +8,7 @@ import aiss.BitbucketMiner.BitbucketMiner.transformer.ProjectTransformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -17,6 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ProjectServiceTest {
+
+    @Value("${bitbucketminer.maxpages}")
+    private int maxPages;
+
+    @Value("${bitbucketminer.ncommits}")
+    private int nCommits;
 
     @Autowired
     ProjectService projectService;
@@ -42,7 +49,7 @@ public class ProjectServiceTest {
 
         MinerProject result = ProjectTransformer.toGitMinerProject(project, List.of(), List.of());
 
-        assertNotNull(result);
+        assertNotNull(result, "El MinerProject no puede ser nulo");
         assertEquals("proj-1234", result.getId());
         assertEquals("Proyecto de prueba", result.getName());
         assertEquals("https://bitbucket.org/test/project", result.getWebUrl());
@@ -53,8 +60,6 @@ public class ProjectServiceTest {
     public void getProjects() {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int nCommits = 5;
-        int maxPages = 1;
 
         String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
 
@@ -63,8 +68,8 @@ public class ProjectServiceTest {
 
         List<MinerProject> projects = projectService.getProjects(workspace, commits, issues);
 
-        assertNotNull(projects);
-        assertFalse(projects.isEmpty());
+        assertNotNull(projects, "La lista de projects no puede ser nula");
+        assertFalse(projects.isEmpty(), "La lista de projects no puede estar vacía");
 
         projects.forEach(projectService::printProject);
     }
@@ -74,8 +79,6 @@ public class ProjectServiceTest {
     public void sendProjectsToGitMiner_test() {
         String workspace = "gentlero";
         String repoSlug = "bitbucket-api";
-        int nCommits = 5;
-        int maxPages = 1;
 
         String projectUuid = commitService.getProjectUuidFromRepo(workspace, repoSlug);
 
@@ -83,7 +86,7 @@ public class ProjectServiceTest {
         List<MinerIssue> issues = issueService.getIssues(workspace, repoSlug, projectUuid, nCommits, maxPages);
 
         int enviados = projectService.sendProjectsToGitMiner(workspace, commits, issues);
-        assertTrue(enviados > 0);
+        assertTrue(enviados > 0, "El número de proyectos enviados debe de ser mayor que 0");
     }
 
 
